@@ -1,20 +1,14 @@
 const nodemailer = require("nodemailer");
+const nodemailerConfig = require("./nodemailerConfig");
 
-const sendEmail = async () => {
-  const transporter = nodemailer.createTransport({
-    host: "smtp.ethereal.email",
-    port: 587,
-    auth: {
-      user: "nya.moore@ethereal.email",
-      pass: "6gaXZZFfB2UeezPNtB",
-    },
-  });
+const sendEmail = async ({ to, subject, html }) => {
+  const transporter = nodemailer.createTransport(nodemailerConfig);
 
-  const info = await transporter.sendMail({
-    from: "Yassin Yahyawi <deidarayassin45@gmail.com>",
-    to: "yassinyahyawi26@gmail.com",
-    subject: "Auth-worflow tutorial",
-    html: "<b>Hello tutorial</b>",
+  return transporter.sendMail({
+    from: "Bugtracker admin <deidarayassin45@gmail.com>",
+    to,
+    subject,
+    html,
   });
 };
 
