@@ -28,8 +28,6 @@ const register = async (req, res) => {
     verificationToken,
   });
 
-  // const tokenUser = createTokenUser(user);
-  // attachCookiesToResponse({ res, user: tokenUser });
   await sendVerificationEmail({
     name: user.name,
     email: user.email,
