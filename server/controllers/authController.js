@@ -4,7 +4,7 @@ const { StatusCodes } = require("http-status-codes");
 const CustomError = require("../errors");
 const { attachCookiesToResponse, createTokenUser } = require("../utils");
 const crypto = require("crypto");
-const { sendVerificationEmail } = require("../utils");
+const { sendVerificationEmail, sendResetPasswordEmail } = require("../utils");
 
 // Register
 const register = async (req, res) => {
@@ -153,7 +153,12 @@ const forgotPassword = async (req, res) => {
   if (user) {
     const passwordToken = crypto.randomBytes(40).toString("hex");
 
-    // send Email
+    await sendResetPasswordEmail({
+      name: user.name,
+      email: user.email,
+      passwordToken,
+      origin: "http://localhost:3000",
+    });
 
     const tenMinutes = 10 * 60 * 1000;
     const passwordTokenExpirationDate = new Date(Date.now() + tenMinutes);

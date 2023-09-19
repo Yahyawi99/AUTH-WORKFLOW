@@ -3,13 +3,17 @@ const sendEmail = require("./sendEmail");
 const sendResetPasswordEmail = async ({
   name,
   email,
-  verificationToken,
+  passwordToken,
   origin,
 }) => {
-  const message = "<p>Please confirm your email by following this link</p>";
+  const verificationURL = `${origin}/user/reset-password?token=${passwordToken}&email=${email}`;
+
+  const message = `<p>Reset your password bay following this link</p>
+   <a href="${verificationURL}">RESET PASSWORD</a>`;
+
   return sendEmail({
     to: email,
-    subject: "Email Confirmation",
+    subject: "Password reset",
     html: `<h1>Hello ${name}</h4>
     ${message}
     `,
