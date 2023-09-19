@@ -55,6 +55,7 @@ const login = async (req, res) => {
   }
 
   const isPasswordCorrect = await user.comparePassword(password);
+
   if (!isPasswordCorrect) {
     throw new CustomError.UnauthenticatedError("Invalid Credentials");
   }
@@ -156,7 +157,7 @@ const forgotPassword = async (req, res) => {
     await sendResetPasswordEmail({
       name: user.name,
       email: user.email,
-      passwordToken,
+      token: passwordToken,
       origin: "http://localhost:3000",
     });
 
@@ -176,7 +177,31 @@ const forgotPassword = async (req, res) => {
 
 // reset password
 const resetPassword = async (req, res) => {
-  res.send("reset");
+  const { token, email, password } = req.body;
+  console.log(password);
+
+  if (!token || !email || !password) {
+    throw new CustomError.BadRequestError("Please provide all values");
+  }
+
+  const user = await User.findOne({ email });
+
+  if (user) {
+    const currentDate = new Date();
+
+    if (
+      user.passwordToken === token &&
+      user.passwordTokenExpirationDate > currentDate
+    ) {
+      user.password = password;
+      user.passwordToken = null;
+      user.passwordTokenExpirationDate = null;
+
+      await user.save();
+    }
+  }
+
+  res.send("Success");
 };
 
 module.exports = {
